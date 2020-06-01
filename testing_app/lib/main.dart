@@ -51,17 +51,56 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _currentSpeed = 30;
+  int _prevSpeed = 0;
+  int _tenTothirty = 10;
+  int _thirtyToten = 12;
+  bool _speedingUp = false;
+  bool _slowingDown = false;
+  int _currentTime = 0;
+  int _endTime = 0;
 
-  void _incrementCounter() {
+  void _calculateTime(int speed) {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+
+      if (_currentSpeed == _currentSpeed + 10) {
+        _speedingUp = true;
+      }
+
+      if (_currentSpeed == _currentSpeed - 10) {
+        _slowingDown = true;
+      }
+
+      if (_currentSpeed == 10 && _slowingDown) {
+        _currentTime = currentTime();
+        _thirtyToten = _endTime - _currentTime;
+      }
+
+      if (_currentSpeed == 30 && _slowingDown) {
+        _endTime = currentTime();
+        _tenTothirty = _currentTime - _endTime;
+      }
+
+      if (_currentSpeed == 10 && _speedingUp) {
+        _endTime = currentTime();
+        _thirtyToten = _endTime - _currentTime;
+      }
+
+      if (_currentSpeed == 30 && _speedingUp) {
+        _currentTime = currentTime();
+        _tenTothirty = _currentTime - _endTime;
+      }
     });
+  }
+
+  static int currentTime() {
+    var now = new DateTime.now().millisecondsSinceEpoch;
+    return (now / 1000).round();
   }
 
   @override
@@ -116,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       needleEndWidth: 1)
                 ], annotations: <GaugeAnnotation>[
                   GaugeAnnotation(
-                      widget: Text("30 KMh",
+                      widget: Text('$_currentSpeed',
                           style: TextStyle(
                               color: Colors.green,
                               fontWeight: FontWeight.bold)),
@@ -127,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(color: Colors.black, fontSize: 7)),
                       positionFactor: 0.5),
                   GaugeAnnotation(
-                      widget: Text("10 Seconds",
+                      widget: Text('$_tenTothirty',
                           style: TextStyle(color: Colors.green, fontSize: 9)),
                       positionFactor: 0.5,
                       angle: 10),
@@ -137,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       axisValue: 45,
                       positionFactor: 0.5),
                   GaugeAnnotation(
-                      widget: Text("12 Seconds",
+                      widget: Text('$_thirtyToten',
                           style: TextStyle(color: Colors.green, fontSize: 9)),
                       axisValue: 40,
                       positionFactor: 0.5,
