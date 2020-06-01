@@ -1,16 +1,21 @@
-# testingapp
+# Car Speedometer app
 
-A new Flutter application.
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-## Getting Started
+[![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](https://forthebadge.com)
 
-This project is a starting point for a Flutter application.
+[![forthebadge](https://forthebadge.com/images/badges/uses-git.svg)](https://forthebadge.com)
 
-A few resources to get you started if this is your first Flutter project:
+[![forthebadge](https://forthebadge.com/images/badges/you-didnt-ask-for-this.svg)](https://forthebadge.com)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Demo
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+download the apk attached
+
+# Built With
+-- [Flutter](https://flutter.dev/) Mobile Dev
+
+-- [SyncFusion Gauage](https://help.syncfusion.com/flutter/radial-gauge/getting-started)
+
+
+
