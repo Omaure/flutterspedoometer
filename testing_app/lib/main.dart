@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:sensors/sensors.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,49 +54,62 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _currentSpeed = 30;
+  int _currentSpeed = 0;
   int _prevSpeed = 0;
-  int _tenTothirty = 10;
-  int _thirtyToten = 12;
-  bool _speedingUp = false;
-  bool _slowingDown = false;
-  int _currentTime = 0;
+  int _tenTothirty = 0;
+  int _thirtyToten = 0;
+  bool _speedingUp;
+  bool _slowingDown;
+  int _startingTime = 0;
   int _endTime = 0;
+
+  void setCurrentSpeed(int speed) {
+    setState(() {
+      _currentSpeed = speed;
+    });
+  }
+
+  void setPrevSpeed(int speed) {
+    setState(() {
+      _prevSpeed = speed;
+    });
+  }
 
   void _calculateTime(int speed) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
+      _currentSpeed = speed;
+      print(_currentSpeed);
+      print(_prevSpeed);
 
-      if (_currentSpeed == _currentSpeed + 10) {
+      if (_currentSpeed > _prevSpeed) {
         _speedingUp = true;
+        _slowingDown = false;
       }
 
-      if (_currentSpeed == _currentSpeed - 10) {
+      if (_currentSpeed < _prevSpeed) {
         _slowingDown = true;
+        _speedingUp = false;
+      }
+      setPrevSpeed(_currentSpeed);
+
+      //if currentspeed == 10 save time
+      // when speed is == 30 save time
+      if (_currentSpeed == 30 && _slowingDown) {
+        _startingTime = currentTime();
       }
 
       if (_currentSpeed == 10 && _slowingDown) {
-        _currentTime = currentTime();
-        _thirtyToten = _endTime - _currentTime;
-      }
-
-      if (_currentSpeed == 30 && _slowingDown) {
         _endTime = currentTime();
-        _tenTothirty = _currentTime - _endTime;
+        _thirtyToten = _endTime - _startingTime;
       }
 
       if (_currentSpeed == 10 && _speedingUp) {
-        _endTime = currentTime();
-        _thirtyToten = _endTime - _currentTime;
+        _startingTime = currentTime();
       }
 
       if (_currentSpeed == 30 && _speedingUp) {
-        _currentTime = currentTime();
-        _tenTothirty = _currentTime - _endTime;
+        _endTime = currentTime();
+        _tenTothirty = _endTime - _startingTime;
       }
     });
   }
@@ -121,73 +137,98 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          // Here inside the widget of the home page
-          children: <Widget>[
-            // defining SfrRadial gauge I was following the documentation
-            SfRadialGauge(
-              axes: <RadialAxis>[
-                RadialAxis(minimum: 0, maximum: 240, interval: 30, ranges: <
-                    GaugeRange>[
-                  GaugeRange(startValue: 0, endValue: 90, color: Colors.green),
-                  GaugeRange(
-                      startValue: 90, endValue: 150, color: Colors.yellow),
-                  GaugeRange(startValue: 150, endValue: 240, color: Colors.red),
-                ], pointers: <GaugePointer>[
-                  NeedlePointer(
-                      value: 30,
-                      enableAnimation: true,
-                      needleStartWidth: 1,
-                      needleEndWidth: 1)
-                ], annotations: <GaugeAnnotation>[
-                  GaugeAnnotation(
-                      widget: Text('$_currentSpeed',
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold)),
-                      positionFactor: 0.5,
-                      angle: 90),
-                  GaugeAnnotation(
-                      widget: Text("From 10 to 30",
-                          style: TextStyle(color: Colors.black, fontSize: 7)),
-                      positionFactor: 0.5),
-                  GaugeAnnotation(
-                      widget: Text('$_tenTothirty',
-                          style: TextStyle(color: Colors.green, fontSize: 9)),
-                      positionFactor: 0.5,
-                      angle: 10),
-                  GaugeAnnotation(
-                      widget: Text("From 30 to 10",
-                          style: TextStyle(color: Colors.black, fontSize: 7)),
-                      axisValue: 45,
-                      positionFactor: 0.5),
-                  GaugeAnnotation(
-                      widget: Text('$_thirtyToten',
-                          style: TextStyle(color: Colors.green, fontSize: 9)),
-                      axisValue: 40,
-                      positionFactor: 0.5,
-                      verticalAlignment: GaugeAlignment.near)
-                ])
-              ],
-            )
-          ],
-        ),
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            // Here inside the widget of the home page
+            children: <Widget>[
+              // defining SfrRadial gauge I was following the documentation
+              SfRadialGauge(
+                axes: <RadialAxis>[
+                  RadialAxis(minimum: 0, maximum: 240, interval: 30, ranges: <
+                      GaugeRange>[
+                    GaugeRange(
+                        startValue: 0, endValue: 90, color: Colors.green),
+                    GaugeRange(
+                        startValue: 90, endValue: 150, color: Colors.yellow),
+                    GaugeRange(
+                        startValue: 150, endValue: 240, color: Colors.red),
+                  ], pointers: <GaugePointer>[
+                    NeedlePointer(
+                        value: _currentSpeed.toDouble(),
+                        enableAnimation: true,
+                        needleStartWidth: 1,
+                        needleEndWidth: 1)
+                  ], annotations: <GaugeAnnotation>[
+                    GaugeAnnotation(
+                        widget: Text('$_currentSpeed',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold)),
+                        positionFactor: 0.5,
+                        angle: 90),
+                    GaugeAnnotation(
+                        widget: Text("From 10 to 30",
+                            style: TextStyle(color: Colors.black, fontSize: 7)),
+                        positionFactor: 0.5),
+                    GaugeAnnotation(
+                        widget: Text('$_tenTothirty',
+                            style: TextStyle(color: Colors.green, fontSize: 9)),
+                        positionFactor: 0.5,
+                        angle: 10),
+                    GaugeAnnotation(
+                        widget: Text("From 30 to 10",
+                            style: TextStyle(color: Colors.black, fontSize: 7)),
+                        axisValue: 45,
+                        positionFactor: 0.5),
+                    GaugeAnnotation(
+                        widget: Text('$_thirtyToten',
+                            style: TextStyle(color: Colors.green, fontSize: 9)),
+                        axisValue: 40,
+                        positionFactor: 0.5,
+                        verticalAlignment: GaugeAlignment.near)
+                  ])
+                ],
+              ),
+              Text('current speed: $_currentSpeed KMh',
+                  style: TextStyle(
+                      color: Colors.green, fontWeight: FontWeight.bold)),
+              Text('From 10 to 30: $_tenTothirty Seconds',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold)),
+              Text('From 30 to 10: $_thirtyToten Seconds',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold))
+            ]),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void initState() {
+    userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+//      print(event);
+      int currSpeed = (event.y).abs().round() * 10;
+      setCurrentSpeed(currSpeed);
+      _calculateTime(_currentSpeed);
+    });
+
+//    Timer(Duration(seconds: 1), () {
+//    });
+
+    super.initState();
   }
 }
