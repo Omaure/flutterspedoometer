@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:sensors/sensors.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   int _currentSpeed = 0;
   int _prevSpeed = 0;
   int _tenTothirty = 0;
@@ -90,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _slowingDown = true;
         _speedingUp = false;
       }
+
       setPrevSpeed(_currentSpeed);
 
       //if currentspeed == 10 save time
@@ -219,14 +222,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    userAccelerometerEvents.listen((UserAccelerometerEvent event) {
-//      print(event);
-      int currSpeed = (event.y).abs().round() * 10;
-      setCurrentSpeed(currSpeed);
-      _calculateTime(_currentSpeed);
-    });
+    _getCurrentLocation() {
+      geolocator
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+          .then((Position position) {
+        setState(() {
+          print(position.speed);
+          _currentSpeed = (position.speed.abs().round() * 3.6).round();
+          print(_currentSpeed);
+          _getCurrentLocation();
+        });
+      }).catchError((e) {
+        print(e);
+      });
+    }
 
-//    Timer(Duration(seconds: 1), () {
+    _getCurrentLocation();
+
+//    userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+//      int currSpeed = (event.y).abs().round() * 10;
+//      setCurrentSpeed(currSpeed);
+//      _calculateTime(_currentSpeed);
 //    });
 
     super.initState();

@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   # The following is a dependency for using a gauge
   syncfusion_flutter_gauges: ^1.0.0-beta
+  geolocator: ^5.3.1
   sensors: ^0.4.2+2
 
 
