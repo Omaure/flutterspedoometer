@@ -230,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
           print(position.speed);
           _currentSpeed = (position.speed.abs().round() * 3.6).round();
           print(_currentSpeed);
+          _calculateTime(_currentSpeed);
           _getCurrentLocation();
         });
       }).catchError((e) {
